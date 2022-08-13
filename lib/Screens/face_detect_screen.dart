@@ -1,4 +1,6 @@
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,6 +30,12 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   UserModel loggedInUser = UserModel();
 
   // Face detector options
+  File? _imageFile;
+  List<Face>? _faces;
+  bool isLoading = false;
+  ui.Image? _image;
+  final picker = ImagePicker();
+  var imageFile;
 
   Widget buildButton({
     required String title,
@@ -68,7 +76,18 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
       );
 
   Widget DisplayImage() {
-    return image != null
+    return image == null
+        ? SizedBox(
+            height: 150,
+            child: Image.asset(
+              "assets/logo.png",
+              fit: BoxFit.contain,
+            ))
+        : selectedImage();
+  }
+
+Widget selectedImage() {
+    return (imageFile == null)
         ? Image.file(
             image!,
             width: MediaQuery.of(context).size.width * 0.70,
@@ -76,12 +95,18 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
             fit: BoxFit.contain,
           )
         : SizedBox(
-            height: 150,
-            child: Image.asset(
-              "assets/logo.png",
-              fit: BoxFit.contain,
-            ),
-          );
+            width: MediaQuery.of(context).size.width * 0.70,
+            height: MediaQuery.of(context).size.height * 0.50,
+            child: Center(
+                child: FittedBox(
+              child: SizedBox(
+                width: (_image?.width.toDouble()),
+                height: _image?.height.toDouble(),
+                child: CustomPaint(
+                  painter: FacePainter(_image!, _faces!),
+                ),
+              ),
+            )));
   }
 
   @override
@@ -148,8 +173,8 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
       final temporaryImage = File(image.path);
       setState(() {
         this.image = temporaryImage;
-        isAnalyse = true;
         this.analyseFunc = faceDetectionFunction;
+        isAnalyse = true;
       });
     } on PlatformException catch (e) {
       Fluttertoast.showToast(msg: e.message.toString());
@@ -163,20 +188,14 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
       final faceDetector = FaceDetector(options: options);
 
       final List<Face> faces = await faceDetector.processImage(inputImage);
-
-      for (Face face in faces) {
-        final Rect boundingBox = face.boundingBox;
-
-        final double? rotX =
-            face.headEulerAngleX; // Head is tilted up and down rotX degrees
-        final double? rotY =
-            face.headEulerAngleY; // Head is rotated to the right rotY degrees
-        final double? rotZ =
-            face.headEulerAngleZ; // Head is tilted sideways rotZ degrees
-
-      }
-
       faceDetector.close();
+
+      final data = await image?.readAsBytes();
+      await decodeImageFromList(data!).then((value) => setState(() {
+            _image = value;
+            _faces = faces;
+            imageFile = image;
+          }));
 
       if (faces.isNotEmpty) {
         Fluttertoast.showToast(msg: faces[0].toString());
@@ -187,6 +206,38 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
       Fluttertoast.showToast(msg: e.toString());
     }
   }
+
+  Future drawBoundingBox() async {}
 }
 
+// paint the face
+class FacePainter extends CustomPainter {
+  final ui.Image image;
+  final List<Face> faces;
+  final List<Rect> rects = [];
 
+  FacePainter(this.image, this.faces) {
+    for (var i = 0; i < faces.length; i++) {
+      rects.add(faces[i].boundingBox);
+    }
+    
+  }
+
+  @override
+  void paint(ui.Canvas canvas, ui.Size size) {
+    final Paint paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10.0
+      ..color = Colors.red;
+
+    canvas.drawImage(image, Offset.zero, Paint());
+    for (var i = 0; i < faces.length; i++) {
+      canvas.drawRect(rects[i], paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(FacePainter old) {
+    return image != old.image || faces != old.faces;
+  }
+}
