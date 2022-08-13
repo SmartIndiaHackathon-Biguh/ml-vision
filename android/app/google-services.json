@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "741284753341",
+    "project_id": "sih-login-test",
+    "storage_bucket": "sih-login-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741284753341:android:301e3e57e100865d972cd4",
+        "android_client_info": {
+          "package_name": "com.example.sih_login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741284753341-sb2ohv2fs9ph0acc69oantgaa279uoko.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChP96LCKS7L_CcqVFoXx1ov3ACzGNfp4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741284753341-sb2ohv2fs9ph0acc69oantgaa279uoko.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
