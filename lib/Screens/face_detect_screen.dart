@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sih_login/Models/user_model.dart';
 import 'dart:ui' as ui;
 import 'package:sih_login/Modules/FaceDetection/FacePainter.dart';
+import 'package:http/http.dart' as http;
+
 // ignore_for_file: prefer_const_constructors
 
 class FaceDetectScreen extends StatefulWidget {
@@ -27,12 +31,13 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   // Face detection values
   File? image;
   bool boundedImage = false;
-  File? _imageFile;
   List<Face>? _faces;
   bool isLoading = false;
   ui.Image? _image;
   final picker = ImagePicker();
-  var imageFile;
+
+  // face recog
+  final String serverURL = 'http://13.71.106.166/';
 
   Widget buildButton({
     required String title,
@@ -171,7 +176,8 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   Future pickImage(ImageSource source) async {
     try {
       isLoading = true;
-      final image = await ImagePicker().pickImage(source: source);
+      final image =
+          await ImagePicker().pickImage(source: source, imageQuality: 20);
       if (image == null) return;
 
       final temporaryImage = File(image.path);
@@ -199,17 +205,38 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
       await decodeImageFromList(data!).then((value) => setState(() {
             _image = value;
             _faces = faces;
-            imageFile = image;
             boundedImage = true;
           }));
 
       if (faces.isNotEmpty) {
         Fluttertoast.showToast(msg: "Face Detected!");
+        try {
+          final response = await uploadImageToContainer(image!.path, serverURL);
+          Fluttertoast.showToast(msg: response.toString());
+        } catch (e) {
+          Fluttertoast.showToast(msg: e.toString());
+        }
       } else {
         Fluttertoast.showToast(msg: "No face found");
       }
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
+  }
+
+  Future uploadImageToContainer(filepath, url) async {
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.files.add(await http.MultipartFile.fromPath('file', filepath));
+
+    http.StreamedResponse response = await request.send();
+    log("Data: ${response.statusCode}");
+
+    var responseBytes = await response.stream.toBytes();
+    var responseString = utf8.decode(responseBytes);
+    print('\n\n');
+    print('RESPONSE WITH HTTP');
+    log("Data: ${responseString}");
+    print('\n\n');
+    return responseString;
   }
 }
