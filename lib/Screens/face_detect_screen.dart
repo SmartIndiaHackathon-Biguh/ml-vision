@@ -20,6 +20,7 @@ import 'package:http/http.dart' as http;
 
 class FaceDetectScreen extends StatefulWidget {
   FaceDetectScreen({Key? key}) : super(key: key);
+  static bool otpVerified = false;
 
   @override
   State<FaceDetectScreen> createState() => _FaceDetectScreenState();
@@ -30,9 +31,6 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
 
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
-
-  final _auth = FirebaseAuth.instance;
-
   // Face detection values
   File? image;
   bool boundedImage = false;
@@ -43,14 +41,6 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
 
   // face recog
   final String serverURL = 'http://13.71.106.166/';
-
-  // editing controllers
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController otpController = TextEditingController();
-
-  String verificationId = "";
-
-  String otpPin = "";
 
   Widget buildButton({
     required String title,
@@ -74,6 +64,14 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
         ),
       );
 
+  Future showOtpDialog() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DynamicDialog(title: 'OTP Verification');
+        });
+  }
+
   Widget analyseButton() => Material(
         elevation: 5,
         color: isAnalyse ? Colors.indigo.shade900 : Colors.grey,
@@ -86,7 +84,11 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
               ? () {
                   Fluttertoast.showToast(msg: "Please Select an Image");
                 }
-              : () {
+              : () async {
+                  log("Otp: ${FaceDetectScreen.otpVerified}");
+                  await showOtpDialog();
+                  log("Otp1: ${FaceDetectScreen.otpVerified}");
+                  if (FaceDetectScreen.otpVerified) faceDetectionFunction();
                 },
           child: Text(
             "Analyse Image",
@@ -254,6 +256,97 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     print('\n\n');
     return responseString;
   }
+}
+
+class DynamicDialog extends StatefulWidget {
+  DynamicDialog({required this.title});
+
+  final String title;
+
+  @override
+  _DynamicDialogState createState() => _DynamicDialogState();
+}
+
+class _DynamicDialogState extends State<DynamicDialog> {
+  late String _buttonTitle;
+
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
+
+  final _auth = FirebaseAuth.instance;
+
+  String verificationId = "";
+
+  String otpPin = "";
+  String countryCode = "+91";
+  bool otpSent = false;
+//   String otpMessage = "Hi";
+
+  @override
+  void initState() {
+    _buttonTitle = "Enter Phone Number";
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final emailField = TextFormField(
+      autofocus: false,
+      controller: phoneController,
+      keyboardType: TextInputType.phone,
+      onSaved: (newValue) => phoneController.text = newValue!,
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+          prefixIcon: Icon(Icons.mail),
+          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          hintText: "Phone Number",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          )),
+    );
+
+    // password
+    final passwordField = TextFormField(
+      autofocus: false,
+      controller: otpController,
+      obscureText: true,
+      onSaved: (newValue) => otpController.text = newValue!,
+      textInputAction: TextInputAction.done,
+      decoration: InputDecoration(
+          prefixIcon: Icon(Icons.vpn_key),
+          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          hintText: "Password",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          )),
+    );
+
+    return AlertDialog(
+      title: Text("OTP Verification"),
+      actions: <Widget>[
+        emailField,
+        SizedBox(
+          height: 10,
+        ),
+        if (otpSent) passwordField,
+        SizedBox(
+          height: 10,
+        ),
+        FlatButton(
+            color: Colors.blueAccent,
+            onPressed: () {
+              otpSent ? verifyOtp() : fetchOtp();
+              // ignore: prefer_const_declarations
+              final newText = 'Verify OTP';
+              setState(() {
+                _buttonTitle = newText;
+                otpSent = true;
+              });
+            },
+            child: Text(_buttonTitle))
+      ],
+    );
+  }
 
   Future<void> fetchOtp() async {
     String number = "+91${phoneController.text}";
@@ -275,20 +368,35 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: otpController.text);
-      await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
+      final testing = await FirebaseAuth.instance.currentUser
+          ?.linkWithCredential(credential);
+      if (testing.toString().isNotEmpty) {
+        log("Data3 ${testing}");
+        FaceDetectScreen.otpVerified = true;
+        Navigator.pop(context);
+      }
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "provider-already-linked":
           print("The provider has already been linked to the user.");
+          FaceDetectScreen.otpVerified = true;
+          Navigator.pop(context);
           break;
         case "invalid-credential":
+          Fluttertoast.showToast(
+              msg: "The provider's credential is not valid.");
           print("The provider's credential is not valid.");
           break;
         case "credential-already-in-use":
+          Fluttertoast.showToast(
+              msg:
+                  "The account corresponding to the credential already exists, "
+                  "or is already linked to a Firebase User. Please use a different phone number.");
           print("The account corresponding to the credential already exists, "
               "or is already linked to a Firebase User.");
           break;
         default:
+          Fluttertoast.showToast(msg: "Please try again.");
           print("Unknown error.");
       }
     }
