@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/home_screen.dart';
+import 'package:sih_login/Screens/navbar.dart';
 import 'package:sih_login/Screens/registration_screen.dart';
 // ignore_for_file: prefer_const_constructors
 
@@ -172,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Fluttertoast.showToast(msg: "Login Successful!");
 
           Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => FaceDetectScreen()));
+              MaterialPageRoute(builder: (context) => BottomNavBar()));
         });
       } on FirebaseAuthException catch (e) {
         Fluttertoast.showToast(msg: e.message.toString());

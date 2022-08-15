@@ -103,7 +103,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   Widget DisplayImage() {
     return image == null
         ? SizedBox(
-            height: 150,
+            height: 120,
             child: Image.asset(
               "assets/logo.png",
               fit: BoxFit.contain,
@@ -116,12 +116,12 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
         ? Image.file(
             image!,
             width: MediaQuery.of(context).size.width * 0.70,
-            height: MediaQuery.of(context).size.height * 0.50,
+            height: MediaQuery.of(context).size.height * 0.45,
             fit: BoxFit.contain,
           )
         : SizedBox(
             width: MediaQuery.of(context).size.width * 0.70,
-            height: MediaQuery.of(context).size.height * 0.50,
+            height: MediaQuery.of(context).size.height * 0.45,
             child: Center(
                 child: FittedBox(
               child: SizedBox(
@@ -166,7 +166,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
               children: <Widget>[
                 DisplayImage(),
                 SizedBox(
-                  height: 20,
+                  height: 15,
                 ),
                 buildButton(
                     onClick: () {
@@ -174,7 +174,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
                     },
                     title: "Open Camera"),
                 SizedBox(
-                  height: 20,
+                  height: 15,
                 ),
                 buildButton(
                     onClick: () {
@@ -182,9 +182,12 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
                     },
                     title: "Open Gallery"),
                 SizedBox(
-                  height: 40,
+                  height: 30,
                 ),
                 analyseButton(),
+                SizedBox(
+                  height: 60,
+                ),
               ],
             ),
           )),
@@ -334,7 +337,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
       },
       //runs when every textfield is filled
       onSubmit: (String verificationCode) {
-        otpController.text = verificationCode!;
+        otpController.text = verificationCode;
       }, // end onSubmit
     );
 
@@ -346,34 +349,44 @@ class _DynamicDialogState extends State<DynamicDialog> {
           height: 10,
         ),
         if (otpSent)
-          Text(
-            "Please Enter the OTP",
-            style: TextStyle(
-                fontSize: 20,
-                color: Colors.blueAccent,
-                fontWeight: FontWeight.bold),
+          SizedBox(
+            height: 20,
+            child: Text(
+              "Please Enter the OTP",
+              style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
-        otpTextFieled1,
+        if (otpSent) otpTextFieled1,
         SizedBox(
           height: 10,
         ),
-        FlatButton(
+        Material(
+          elevation: 5,
           color: Colors.blueAccent,
-          onPressed: () {
-            otpSent ? verifyOtp() : fetchOtp();
-            // ignore: prefer_const_declarations
-            final newText = 'Verify OTP';
-            setState(() {
-              _buttonTitle = newText;
-              otpSent = true;
-            });
-          },
-          child: Text(
-            _buttonTitle,
-            style: TextStyle(
-                fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        )
+          borderRadius: BorderRadius.circular(30),
+          child: MaterialButton(
+              padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+              minWidth: MediaQuery.of(context).size.width,
+              onPressed: () {
+                otpSent ? verifyOtp() : fetchOtp();
+                // ignore: prefer_const_declarations
+                final newText = 'Verify OTP';
+                setState(() {
+                  _buttonTitle = newText;
+                  otpSent = true;
+                });
+              },
+              child: Text(
+                _buttonTitle,
+                style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              )),
+        ),
       ],
     );
   }

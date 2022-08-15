@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sih_login/Models/user_model.dart';
 import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/home_screen.dart';
+import 'package:sih_login/Screens/navbar.dart';
 // ignore_for_file: prefer_const_constructors
 
 class RegistrationScreen extends StatefulWidget {
@@ -246,7 +247,7 @@ class RregistrationScreenState extends State<RegistrationScreen> {
                   postDetailsToFirestore(),
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                          builder: (context) => FaceDetectScreen()),
+                          builder: (context) => BottomNavBar()),
                       (Route route) => false)
                 });
       } on FirebaseAuthException catch (e) {

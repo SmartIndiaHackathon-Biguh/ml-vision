@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/home_screen.dart';
 import 'package:sih_login/Screens/login_screen.dart';
-import 'package:sih_login/Screens/phone_otp.dart';
+import 'package:sih_login/Screens/navbar.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return FaceDetectScreen();
+              return BottomNavBar();
             }
             return LoginScreen();
           }),
