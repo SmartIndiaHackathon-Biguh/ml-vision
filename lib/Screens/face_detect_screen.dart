@@ -151,6 +151,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     return AbsorbPointer(
         absorbing: false,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             title: Text("Recognise Child"),
             centerTitle: true,

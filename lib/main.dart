@@ -19,19 +19,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Toddlert',
+      title: 'sih_login',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen()
-      // StreamBuilder<User?>(
-      //     stream: FirebaseAuth.instance.authStateChanges(),
-      //     builder: (context, snapshot) {
-      //       if (snapshot.hasData) {
-      //         return FaceDetectScreen();
-      //       }
-      //       return LoginScreen();
-      //     }),
+      home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return FaceDetectScreen();
+            }
+            return LoginScreen();
+          }),
     );
   }
 }
