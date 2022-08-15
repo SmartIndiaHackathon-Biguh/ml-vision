@@ -15,6 +15,7 @@ import 'package:sih_login/Models/user_model.dart';
 import 'dart:ui' as ui;
 import 'package:sih_login/Modules/FaceDetection/FacePainter.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 // ignore_for_file: prefer_const_constructors
 
@@ -291,14 +292,14 @@ class _DynamicDialogState extends State<DynamicDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final emailField = TextFormField(
+    final phoneNoField = TextFormField(
       autofocus: false,
       controller: phoneController,
       keyboardType: TextInputType.phone,
       onSaved: (newValue) => phoneController.text = newValue!,
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-          prefixIcon: Icon(Icons.mail),
+          prefixIcon: Icon(Icons.phone),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Phone Number",
           border: OutlineInputBorder(
@@ -322,29 +323,57 @@ class _DynamicDialogState extends State<DynamicDialog> {
           )),
     );
 
+    final otpTextFieled1 = OtpTextField(
+      numberOfFields: 6,
+      borderColor: Color(0xFF512DA8),
+      //set to true to show as box or false to show as dash
+      showFieldAsBox: true,
+      //runs when a code is typed in
+      onCodeChanged: (String code) {
+        //handle validation or checks here
+      },
+      //runs when every textfield is filled
+      onSubmit: (String verificationCode) {
+        otpController.text = verificationCode!;
+      }, // end onSubmit
+    );
+
     return AlertDialog(
       title: Text("OTP Verification"),
       actions: <Widget>[
-        emailField,
+        phoneNoField,
         SizedBox(
           height: 10,
         ),
-        if (otpSent) passwordField,
+        if (otpSent)
+          Text(
+            "Please Enter the OTP",
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.blueAccent,
+                fontWeight: FontWeight.bold),
+          ),
+        otpTextFieled1,
         SizedBox(
           height: 10,
         ),
         FlatButton(
-            color: Colors.blueAccent,
-            onPressed: () {
-              otpSent ? verifyOtp() : fetchOtp();
-              // ignore: prefer_const_declarations
-              final newText = 'Verify OTP';
-              setState(() {
-                _buttonTitle = newText;
-                otpSent = true;
-              });
-            },
-            child: Text(_buttonTitle))
+          color: Colors.blueAccent,
+          onPressed: () {
+            otpSent ? verifyOtp() : fetchOtp();
+            // ignore: prefer_const_declarations
+            final newText = 'Verify OTP';
+            setState(() {
+              _buttonTitle = newText;
+              otpSent = true;
+            });
+          },
+          child: Text(
+            _buttonTitle,
+            style: TextStyle(
+                fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        )
       ],
     );
   }
