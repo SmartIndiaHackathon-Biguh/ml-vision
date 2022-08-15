@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/home_screen.dart';
 import 'package:sih_login/Screens/login_screen.dart';
+import 'package:sih_login/Screens/phone_otp.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +23,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return FaceDetectScreen();
-            }
-            return LoginScreen();
-          }),
+      home: LoginScreen()
+      // StreamBuilder<User?>(
+      //     stream: FirebaseAuth.instance.authStateChanges(),
+      //     builder: (context, snapshot) {
+      //       if (snapshot.hasData) {
+      //         return FaceDetectScreen();
+      //       }
+      //       return LoginScreen();
+      //     }),
     );
   }
 }

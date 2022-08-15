@@ -245,13 +245,15 @@ class RregistrationScreenState extends State<RegistrationScreen> {
             .then((value) => {
                   postDetailsToFirestore(),
                   Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => FaceDetectScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => FaceDetectScreen()),
                       (Route route) => false)
                 });
       } on FirebaseAuthException catch (e) {
         Fluttertoast.showToast(msg: e.message.toString());
       }
     }
+    final cred = EmailAuthProvider.credential(email: email, password: password);
   }
 
   void postDetailsToFirestore() async {

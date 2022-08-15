@@ -1,3 +1,6 @@
+// ignore_for_file: non_constant_identifier_names
+
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -28,6 +31,8 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
 
+  final _auth = FirebaseAuth.instance;
+
   // Face detection values
   File? image;
   bool boundedImage = false;
@@ -38,6 +43,14 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
 
   // face recog
   final String serverURL = 'http://13.71.106.166/';
+
+  // editing controllers
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
+
+  String verificationId = "";
+
+  String otpPin = "";
 
   Widget buildButton({
     required String title,
@@ -73,7 +86,8 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
               ? () {
                   Fluttertoast.showToast(msg: "Please Select an Image");
                 }
-              : faceDetectionFunction,
+              : () {
+                },
           child: Text(
             "Analyse Image",
             textAlign: TextAlign.center,
@@ -212,7 +226,8 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
         Fluttertoast.showToast(msg: "Face Detected!");
         try {
           final response = await uploadImageToContainer(image!.path, serverURL);
-          Fluttertoast.showToast(msg: response.toString());
+          // Fluttertoast.showToast(msg: response.toString());
+          Fluttertoast.showToast(msg: "Success");
         } catch (e) {
           Fluttertoast.showToast(msg: e.toString());
         }
@@ -238,5 +253,44 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     log("Data: ${responseString}");
     print('\n\n');
     return responseString;
+  }
+
+  Future<void> fetchOtp() async {
+    String number = "+91${phoneController.text}";
+    await _auth.verifyPhoneNumber(
+        phoneNumber: number,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await _auth.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          Fluttertoast.showToast(msg: e.message.toString());
+        },
+        codeSent: (String verificationId, int? resendToken) async {
+          this.verificationId = verificationId;
+        },
+        codeAutoRetrievalTimeout: (String verifyId) {});
+  }
+
+  void verifyOtp() async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: verificationId, smsCode: otpController.text);
+      await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "provider-already-linked":
+          print("The provider has already been linked to the user.");
+          break;
+        case "invalid-credential":
+          print("The provider's credential is not valid.");
+          break;
+        case "credential-already-in-use":
+          print("The account corresponding to the credential already exists, "
+              "or is already linked to a Firebase User.");
+          break;
+        default:
+          print("Unknown error.");
+      }
+    }
   }
 }
