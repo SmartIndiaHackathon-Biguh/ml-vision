@@ -47,6 +47,8 @@ dependencies:
 
   flutter_otp_text_field: ^1.1.0
 
+  translator: ^0.1.7
+
   # face detection
   image_picker: ^0.8.5+3
   google_mlkit_face_detection: ^0.4.0

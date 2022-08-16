@@ -6,6 +6,7 @@ import 'package:sih_login/Screens/registration_screen.dart';
 import 'package:sih_login/Screens/test_screen1.dart';
 import 'package:sih_login/Screens/test_screen2.dart';
 import 'package:sih_login/Screens/test_screen3.dart';
+import 'package:sih_login/Screens/translate_text.dart';
 
 class BottomNavBar extends StatefulWidget {
   BottomNavBar({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     final screens = [
       HomeScreen(),
       FaceDetectScreen(),
-      TestScreen1(),
+      TranslatePage(),
       TestScreen2(),
     ];
     final items = <Widget>[
