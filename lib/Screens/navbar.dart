@@ -15,6 +15,8 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
+
+
   final navigationKey = GlobalKey<CurvedNavigationBarState>();
   int index = 0;
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
@@ -34,7 +36,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
       Icon(Icons.settings, size: 30),
     ];
     return Scaffold(
-      body: screens[index],
+      body: IndexedStack(
+        index: index,
+        children: screens,),
       extendBody: true,
       resizeToAvoidBottomInset: false,
 
