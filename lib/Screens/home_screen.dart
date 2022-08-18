@@ -6,6 +6,13 @@ import 'package:sih_login/Models/user_model.dart';
 import 'package:sih_login/Screens/login_screen.dart';
 // ignore_for_file: prefer_const_constructors
 
+
+// DS AURGAAAAAAAAAAAAAAg
+// make a get request to db, return list of missing children objects
+// return for each child -> image, name, age, gender, location
+
+
+
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
 

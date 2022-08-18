@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/home_screen.dart';
-import 'package:sih_login/Screens/registration_screen.dart';
-import 'package:sih_login/Screens/test_screen1.dart';
 import 'package:sih_login/Screens/test_screen2.dart';
-import 'package:sih_login/Screens/test_screen3.dart';
 import 'package:sih_login/Screens/translate_text.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -30,10 +27,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
       TestScreen2(),
     ];
     final items = <Widget>[
-      Icon(Icons.home, size: 30),
-      Icon(Icons.search, size: 30),
-      Icon(Icons.favorite, size: 30),
-      Icon(Icons.settings, size: 30),
+      const Icon(Icons.home, size: 30),
+      const Icon(Icons.search, size: 30),
+      const Icon(Icons.favorite, size: 30),
+      const Icon(Icons.settings, size: 30),
     ];
     return Scaffold(
       body: IndexedStack(
