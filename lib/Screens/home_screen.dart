@@ -8,9 +8,35 @@ import 'package:sih_login/Screens/login_screen.dart';
 
 
 // DS AURGAAAAAAAAAAAAAAg
+
+//Anurag code
+
+//part a
 // make a get request to db, return list of missing children objects
 // return for each child -> image, name, age, gender, location
 
+//fist steps
+//From the root of your Flutter project,run this command
+flutter pub add cloud_firestore
+//rebuild your Flutter application
+flutter run
+//initialize db
+db = FirebaseFirestore.instance;
+//read data
+await db.collection("users").get().then((event) {
+  for (var doc in event.docs) {
+    print("${doc.id} => ${doc.data()}");
+  }
+});
+//doc data has the dictionary value
+
+//partb
+//merging 2 dbs
+// Add a new document with a generated ID
+// TODO MERGE doc.data() and user data
+//idk where user data is
+db.collection("police_side_dual_db").add(doc.data()).then((DocumentReference doc) =>
+    print('DocumentSnapshot added with ID: ${doc.id}'));
 
 
 class HomeScreen extends StatefulWidget {
