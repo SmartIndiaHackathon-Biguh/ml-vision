@@ -78,7 +78,7 @@ class _TranslatePageState extends State<TranslatePage> {
               ),
               decoration: const InputDecoration(hintText: 'Enter text'),
               onChanged: (text) async {
-                if (text.length != 0) {
+                if (text.isNotEmpty) {
                   setState(() {
                     textToTranslate = text;
                     translateText();
