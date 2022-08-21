@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/home_screen.dart';
-import 'package:sih_login/Screens/test_screen2.dart';
+import 'package:sih_login/Screens/ngo_screen.dart';
 import 'package:sih_login/Screens/translate_text.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -24,7 +24,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       HomeScreen(),
       FaceDetectScreen(),
       TranslatePage(),
-      TestScreen2(),
+      ngoScreen(),
     ];
     final items = <Widget>[
       const Icon(Icons.home, size: 30),
