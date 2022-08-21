@@ -49,6 +49,11 @@ dependencies:
 
   translator: ^0.1.7
 
+  #GeoLocation
+  geolocator: ^9.0.1
+  geopoint: ^1.0.0
+
+  
   # face detection
   image_picker: ^0.8.5+3
   google_mlkit_face_detection: ^0.4.0

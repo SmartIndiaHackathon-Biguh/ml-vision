@@ -26,7 +26,6 @@ class DynamicDialog extends StatefulWidget {
   _DynamicDialogState createState() => _DynamicDialogState();
 }
 
-
 class _DynamicDialogState extends State<DynamicDialog> {
   late String _buttonTitle;
 
@@ -64,7 +63,6 @@ class _DynamicDialogState extends State<DynamicDialog> {
             borderRadius: BorderRadius.circular(10),
           )),
     );
-
 
     final otpTextFieled1 = OtpTextField(
       numberOfFields: 6,
@@ -156,6 +154,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
       if (testing.toString().isNotEmpty) {
         log("Data3 ${testing}");
         FaceDetectScreen.otpVerified = true;
+        FaceDetectScreen.userPhoneNumber = int.parse(phoneController.text);
         Navigator.pop(context);
       }
     } on FirebaseAuthException catch (e) {
@@ -163,6 +162,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
         case "provider-already-linked":
           print("The provider has already been linked to the user.");
           FaceDetectScreen.otpVerified = true;
+          FaceDetectScreen.userPhoneNumber = int.parse(phoneController.text);
           Navigator.pop(context);
           break;
         case "invalid-credential":

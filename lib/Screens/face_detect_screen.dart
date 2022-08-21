@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,12 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sih_login/Models/child_user_model.dart';
 import 'package:sih_login/Models/user_model.dart';
 import 'dart:ui' as ui;
 import 'package:sih_login/Modules/FaceDetection/FacePainter.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../Modules/FaceDetection/DynamicDialog.dart';
 
@@ -24,6 +26,7 @@ import '../Modules/FaceDetection/DynamicDialog.dart';
 class FaceDetectScreen extends StatefulWidget {
   FaceDetectScreen({Key? key}) : super(key: key);
   static bool otpVerified = false;
+  static int userPhoneNumber = 0;
 
   @override
   State<FaceDetectScreen> createState() => _FaceDetectScreenState();
@@ -44,6 +47,18 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
 
   // face recog
   final String serverURL = 'http://13.71.106.166/';
+
+  // Child Details
+  String? childName;
+  int? childAge;
+  String? childGender;
+  String? childLocation;
+  String? gdeNo;
+  String? gdeDate;
+  int? childPhone;
+
+  // User info
+  Position? userPosition;
 
   Widget buildButton({
     required String title,
@@ -88,9 +103,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
                   Fluttertoast.showToast(msg: "Please Select an Image");
                 }
               : () async {
-                  log("Otp: ${FaceDetectScreen.otpVerified}");
                   await showOtpDialog();
-                  log("Otp1: ${FaceDetectScreen.otpVerified}");
                   if (FaceDetectScreen.otpVerified) faceDetectionFunction();
                 },
           child: Text(
@@ -171,7 +184,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
                   height: 25,
                 ),
                 Row(
-                  mainAxisAlignment:MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     buildButton(
@@ -180,7 +193,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
                         },
                         title: "Open Gallery"),
                     SizedBox(
-                      width: 40,
+                      width: MediaQuery.of(context).size.width * 0.02,
                     ),
                     buildButton(
                         onClick: () {
@@ -261,12 +274,99 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     http.StreamedResponse response = await request.send();
     log("Data: ${response.statusCode}");
 
-    var responseBytes = await response.stream.toBytes();
-    var responseString = utf8.decode(responseBytes);
-    print('\n\n');
-    print('RESPONSE WITH HTTP');
-    log("Data: ${responseString}");
-    print('\n\n');
-    return responseString;
+    // var responseBytes = await response.stream.toBytes();
+    // var responseString = utf8.decode(responseBytes);
+    // var responseString2 = jsonDecode(responseString);
+    var responseString = await response.stream.bytesToString();
+    final decodedMap = json.decode(responseString);
+    if ((decodedMap['gdeNo'].toString().isNotEmpty)) {
+      childName = decodedMap['name'];
+      childAge = decodedMap['age'];
+      childGender = decodedMap['gender'];
+      childLocation = "${decodedMap['District']}, ${decodedMap['State']}";
+      childPhone = decodedMap['mobile'];
+      gdeDate = decodedMap['gdeDate'];
+      gdeNo = decodedMap['gdeNo'];
+      createChildScan();
+      return responseString;
+    }
+    return null;
+  }
+
+  Future createChildScan() async {
+    log("in here");
+    final doc_id = generateRandomString(15);
+    final scanDbInst =
+        FirebaseFirestore.instance.collection('scan-details').doc(doc_id);
+
+    final scanTime = DateTime.now();
+
+    userPosition = await _determinePosition();
+
+    final userGeoPoint =
+        GeoPoint(userPosition!.latitude, userPosition!.longitude);
+
+    ScanModel newScan = ScanModel();
+
+    newScan.childName = childName;
+    newScan.childAge = childAge;
+    newScan.childGender = childGender;
+    newScan.childLocation = childLocation;
+    newScan.childPhone = childPhone;
+    newScan.gdeDate = gdeDate;
+    newScan.gdeNo = gdeNo;
+
+    newScan.userName = "${loggedInUser.firstName} ${loggedInUser.lastName}";
+    newScan.userEmail = loggedInUser.email;
+    newScan.userPhone = FaceDetectScreen.userPhoneNumber;
+    newScan.userPosition = userGeoPoint;
+    newScan.scanTime = scanTime;
+
+    await scanDbInst.set(newScan.toMap());
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
+
+  String generateRandomString(int len) {
+    var r = math.Random();
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
+        .join();
   }
 }

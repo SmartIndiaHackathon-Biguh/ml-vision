@@ -20,7 +20,7 @@ class FacePainter extends CustomPainter {
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10.0
-      ..color = Colors.red;
+      ..color = Colors.blueAccent;
 
     canvas.drawImage(image, Offset.zero, Paint());
     for (var i = 0; i < faces.length; i++) {
