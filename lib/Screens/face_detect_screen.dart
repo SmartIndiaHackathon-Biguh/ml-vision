@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -18,9 +16,9 @@ import 'dart:ui' as ui;
 import 'package:sih_login/Modules/FaceDetection/FacePainter.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
-
+import 'package:sih_login/Screens/child_info_screen.dart';
 import '../Modules/FaceDetection/DynamicDialog.dart';
-
+// ignore_for_file: non_constant_identifier_names
 // ignore_for_file: prefer_const_constructors
 
 class FaceDetectScreen extends StatefulWidget {
@@ -46,7 +44,9 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   final picker = ImagePicker();
 
   // face recog
-  final String serverURL = 'http://13.71.106.166/';
+  final String serverURL = 'http://13.71.107.179/';
+
+  var childImage;
 
   // Child Details
   String? childName;
@@ -59,95 +59,6 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
 
   // User info
   Position? userPosition;
-
-  Widget buildButton({
-    required String title,
-    required VoidCallback? onClick,
-  }) =>
-      Material(
-        elevation: 5,
-        color: Colors.blueAccent,
-        borderRadius: BorderRadius.circular(30),
-        child: MaterialButton(
-          height: 50,
-          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          minWidth: MediaQuery.of(context).size.width * 0.35,
-          onPressed: onClick,
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-      );
-
-  Future showOtpDialog() {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return DynamicDialog(title: 'OTP Verification');
-        });
-  }
-
-  Widget analyseButton() => Material(
-        elevation: 5,
-        color: isAnalyse ? Colors.indigo.shade900 : Colors.grey,
-        borderRadius: BorderRadius.circular(30),
-        child: MaterialButton(
-          height: 50,
-          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          minWidth: MediaQuery.of(context).size.width * 0.75,
-          onPressed: image == null
-              ? () {
-                  Fluttertoast.showToast(msg: "Please Select an Image");
-                }
-              : () async {
-                  await showOtpDialog();
-                  if (FaceDetectScreen.otpVerified) faceDetectionFunction();
-                },
-          child: Text(
-            "Analyse Image",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-      );
-
-  Widget DisplayImage() {
-    return image == null
-        ? SizedBox(
-            height: 150,
-            child: Image.asset(
-              "assets/logo.png",
-              fit: BoxFit.contain,
-            ))
-        : selectedImage();
-  }
-
-  Widget selectedImage() {
-    return !boundedImage
-        ? Image.file(
-            image!,
-            width: MediaQuery.of(context).size.width * 0.70,
-            height: MediaQuery.of(context).size.height * 0.50,
-            fit: BoxFit.contain,
-          )
-        : SizedBox(
-            width: MediaQuery.of(context).size.width * 0.70,
-            height: MediaQuery.of(context).size.height * 0.50,
-            child: Center(
-                child: FittedBox(
-              child: SizedBox(
-                width: (_image?.width.toDouble()),
-                height: _image?.height.toDouble(),
-                child: CustomPaint(
-                  painter: FacePainter(_image!, _faces!),
-                ),
-              ),
-            )));
-  }
 
   @override
   void initState() {
@@ -215,6 +126,87 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
         ));
   }
 
+  Widget buildButton({
+    required String title,
+    required VoidCallback? onClick,
+  }) =>
+      Material(
+        elevation: 5,
+        color: Colors.blueAccent,
+        borderRadius: BorderRadius.circular(30),
+        child: MaterialButton(
+          height: 50,
+          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          minWidth: MediaQuery.of(context).size.width * 0.35,
+          onPressed: onClick,
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+
+  Widget analyseButton() => Material(
+        elevation: 5,
+        color: isAnalyse ? Colors.indigo.shade900 : Colors.grey,
+        borderRadius: BorderRadius.circular(30),
+        child: MaterialButton(
+          height: 50,
+          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          minWidth: MediaQuery.of(context).size.width * 0.75,
+          onPressed: image == null
+              ? () {
+                  Fluttertoast.showToast(msg: "Please Select an Image");
+                }
+              : () async {
+                  await showOtpDialog();
+                  if (FaceDetectScreen.otpVerified) faceDetectionFunction();
+                },
+          child: Text(
+            "Analyse Image",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+
+  Widget DisplayImage() {
+    return image == null
+        ? SizedBox(
+            height: 150,
+            child: Image.asset(
+              "assets/logo.png",
+              fit: BoxFit.contain,
+            ))
+        : selectedImage();
+  }
+
+  Widget selectedImage() {
+    return !boundedImage
+        ? Image.file(
+            image!,
+            width: MediaQuery.of(context).size.width * 0.70,
+            height: MediaQuery.of(context).size.height * 0.50,
+            fit: BoxFit.contain,
+          )
+        : SizedBox(
+            width: MediaQuery.of(context).size.width * 0.70,
+            height: MediaQuery.of(context).size.height * 0.50,
+            child: Center(
+                child: FittedBox(
+              child: SizedBox(
+                width: (_image?.width.toDouble()),
+                height: _image?.height.toDouble(),
+                child: CustomPaint(
+                  painter: FacePainter(_image!, _faces!),
+                ),
+              ),
+            )));
+  }
+
   Future pickImage(ImageSource source) async {
     try {
       isLoading = true;
@@ -232,6 +224,14 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     } on PlatformException catch (e) {
       Fluttertoast.showToast(msg: e.message.toString());
     }
+  }
+
+  Future showOtpDialog() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DynamicDialog(title: 'OTP Verification');
+        });
   }
 
   Future faceDetectionFunction() async {
@@ -256,6 +256,17 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
           final response = await uploadImageToContainer(image!.path, serverURL);
           // Fluttertoast.showToast(msg: response.toString());
           Fluttertoast.showToast(msg: "Success");
+          if (childAge != null) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => ChildInfoScreen(
+                    childName: childName!,
+                    childAge: childAge!,
+                    childGender: childGender!,
+                    childLocation: childLocation!,
+                    childContactNumber: childPhone!)));
+          } else {
+            Fluttertoast.showToast(msg: "Child Not Found.");
+          }
         } catch (e) {
           Fluttertoast.showToast(msg: e.toString());
         }
@@ -294,7 +305,6 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   }
 
   Future createChildScan() async {
-    log("in here");
     final doc_id = generateRandomString(15);
     final scanDbInst =
         FirebaseFirestore.instance.collection('scan-details').doc(doc_id);
