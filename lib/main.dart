@@ -11,8 +11,8 @@ Future main() async {
   await Firebase.initializeApp();
 
   runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MyApp()));
+    home: MyApp(),
+    debugShowCheckedModeBanner: false,));
 }
 
 class MyApp extends StatelessWidget {

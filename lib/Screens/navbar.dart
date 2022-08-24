@@ -23,7 +23,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       HomeScreen(),
       FaceDetectScreen(),
       TranslatePage(),
-      GoogleMapsScreen(),
+      PoliceScreen(),
       ngoScreen(),
     ];
     final items = <Widget>[
