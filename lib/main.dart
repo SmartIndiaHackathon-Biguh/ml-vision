@@ -10,7 +10,9 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(MaterialApp(home: MyApp()));
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

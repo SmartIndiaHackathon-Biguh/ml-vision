@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:sih_login/Screens/face_detect_screen.dart';
+import 'package:sih_login/Screens/google_maps.dart';
 import 'package:sih_login/Screens/home_screen.dart';
 import 'package:sih_login/Screens/ngo_screen.dart';
 import 'package:sih_login/Screens/translate_text.dart';
@@ -12,8 +13,6 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-
-
   final navigationKey = GlobalKey<CurvedNavigationBarState>();
   int index = 0;
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
@@ -24,22 +23,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
       HomeScreen(),
       FaceDetectScreen(),
       TranslatePage(),
+      GoogleMapsScreen(),
       ngoScreen(),
       
     ];
     final items = <Widget>[
       const Icon(Icons.home, size: 30),
-      const Icon(Icons.search, size: 30),
-      const Icon(Icons.favorite, size: 30),
+      const Icon(Icons.camera_alt, size: 30),
+      const Icon(Icons.translate, size: 30),
+      const Icon(Icons.map, size: 30),
       const Icon(Icons.settings, size: 30),
     ];
     return Scaffold(
       body: IndexedStack(
         index: index,
-        children: screens,),
+        children: screens,
+      ),
       extendBody: true,
       resizeToAvoidBottomInset: false,
-
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           iconTheme: IconThemeData(color: Colors.black),
