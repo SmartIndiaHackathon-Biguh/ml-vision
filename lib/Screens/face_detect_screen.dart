@@ -78,52 +78,59 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     return AbsorbPointer(
         absorbing: false,
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            title: Text("Recognise Child"),
-            centerTitle: true,
-          ),
-          body: Center(
-              child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                DisplayImage(),
-                SizedBox(
-                  height: 25,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    buildButton(
-                        onClick: () {
-                          pickImage(ImageSource.gallery);
-                        },
-                        title: "Open Gallery"),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.02,
-                    ),
-                    buildButton(
-                        onClick: () {
-                          pickImage(ImageSource.camera);
-                        },
-                        title: "Open Camera"),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                analyseButton(),
-                SizedBox(
-                  height: 50,
-                ),
-              ],
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              title: Text("Recognise Child"),
+              centerTitle: true,
             ),
-          )),
-        ));
+            body: childAge == null
+                ? Center(
+                    child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        DisplayImage(),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            buildButton(
+                                onClick: () {
+                                  pickImage(ImageSource.gallery);
+                                },
+                                title: "Open Gallery"),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.02,
+                            ),
+                            buildButton(
+                                onClick: () {
+                                  pickImage(ImageSource.camera);
+                                },
+                                title: "Open Camera"),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        analyseButton(),
+                        SizedBox(
+                          height: 50,
+                        ),
+                      ],
+                    ),
+                  ))
+                : ChildInfoScreen(
+                    childImage: childImage!,
+                    childName: childName!,
+                    childAge: childAge!,
+                    childGender: childGender!,
+                    childLocation: childLocation!,
+                    childContactNumber: childPhone!)));
   }
 
   Widget buildButton({
@@ -259,6 +266,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
           if (childAge != null) {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => ChildInfoScreen(
+                    childImage: childImage!,
                     childName: childName!,
                     childAge: childAge!,
                     childGender: childGender!,
@@ -298,6 +306,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
       childPhone = decodedMap['mobile'];
       gdeDate = decodedMap['gdeDate'];
       gdeNo = decodedMap['gdeNo'];
+      childImage = decodedMap['ImageURl'];
       createChildScan();
       return responseString;
     }

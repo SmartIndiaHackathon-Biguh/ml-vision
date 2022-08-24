@@ -25,6 +25,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       FaceDetectScreen(),
       TranslatePage(),
       ngoScreen(),
+      
     ];
     final items = <Widget>[
       const Icon(Icons.home, size: 30),

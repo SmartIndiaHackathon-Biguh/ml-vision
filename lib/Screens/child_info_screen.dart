@@ -7,20 +7,28 @@ import 'package:sih_login/Screens/login_screen.dart';
 // ignore_for_file: prefer_const_constructors
 
 class ChildInfoScreen extends StatefulWidget {
-  ChildInfoScreen({Key? key, required this.childName, required this.childAge, required this.childGender, required this.childLocation, required this.childContactNumber}) : super(key: key);
+  ChildInfoScreen(
+      {Key? key,
+      required this.childName,
+      required this.childAge,
+      required this.childGender,
+      required this.childLocation,
+      required this.childContactNumber,
+      required this.childImage})
+      : super(key: key);
 
   String childName;
   int childAge;
   String childGender;
   int childContactNumber;
   String childLocation;
+  String childImage;
 
   @override
   State<ChildInfoScreen> createState() => _ChildInfoScreenState();
 }
 
 class _ChildInfoScreenState extends State<ChildInfoScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -41,14 +49,9 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           // ignore: prefer_const_literals_to_create_immutables
           children: <Widget>[
-            // SizedBox(
-            //   height: 150,
-            //   child: Image.asset(
-            //     "assets/logo.png",
-            //     fit: BoxFit.contain,
-            //   ),
-            // ),
-
+            SizedBox(
+                height: MediaQuery.of(context).size.height * 0.40,
+                child: Image.network(widget.childImage)),
             Text(
               widget.childName,
               style: TextStyle(
