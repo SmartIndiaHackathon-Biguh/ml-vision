@@ -19,6 +19,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:sih_login/Screens/child_info_screen.dart';
 import '../Modules/FaceDetection/DynamicDialog.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 // ignore_for_file: non_constant_identifier_names
 // ignore_for_file: prefer_const_constructors
 
@@ -62,6 +63,8 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   // User info
   Position? userPosition;
 
+  TwilioFlutter? twilioFlutter;
+
   @override
   void initState() {
     super.initState();
@@ -71,8 +74,20 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
         .get()
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
+      twilioFlutter = TwilioFlutter(
+          accountSid: 'ACd6d58528cbd89ded2645a8d231ab14ac',
+          authToken: 'f1c1d1567477cb092eefeabeb9b32c28',
+          twilioNumber: '+15155176934');
+      super.initState();
       setState(() {});
     });
+  }
+
+  void sendSms() async {
+    twilioFlutter!.sendSMS(
+        toNumber: '+919886011730',
+        messageBody:
+            'Child ${childName!} has been found by ${loggedInUser.firstName} with number ${FaceDetectScreen.userPhoneNumber}.');
   }
 
   @override
@@ -258,15 +273,19 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
           // Fluttertoast.showToast(msg: response.toString());
           Fluttertoast.showToast(msg: "Success");
           if (childAge != null) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => ChildInfoScreen(
-                    audioUrl: audioUrl!,
-                    childImage: childImage!,
-                    childName: childName!,
-                    childAge: childAge!,
-                    childGender: childGender!,
-                    childLocation: childLocation!,
-                    childContactNumber: childPhone!)));
+            // sendSms();
+            // ignore: use_build_context_synchronously
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChildInfoScreen(
+                        audioUrl: audioUrl!,
+                        childImage: childImage!,
+                        childName: childName!,
+                        childAge: childAge!,
+                        childGender: childGender!,
+                        childLocation: childLocation!,
+                        childContactNumber: childPhone!)));
           } else {
             Fluttertoast.showToast(msg: "Child Not Found.");
           }
@@ -285,29 +304,32 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(await http.MultipartFile.fromPath('file', filepath));
 
-    http.StreamedResponse response = await request.send();
-    log("Data: ${response.statusCode}");
+    try {
+      http.StreamedResponse response = await request.send();
+      log("Data: ${response.statusCode}");
 
-    // var responseBytes = await response.stream.toBytes();
-    // var responseString = utf8.decode(responseBytes);
-    // var responseString2 = jsonDecode(responseString);
-    var responseString = await response.stream.bytesToString();
-    final decodedMap = json.decode(responseString);
-    if ((decodedMap['gdeNo'].toString().isNotEmpty)) {
-      log("message: ${decodedMap['audio']}");
-      audioUrl = decodedMap['audio'];
+      // var responseBytes = await response.stream.toBytes();
+      // var responseString = utf8.decode(responseBytes);
+      // var responseString2 = jsonDecode(responseString);
+      var responseString = await response.stream.bytesToString();
+      final decodedMap = json.decode(responseString);
+      if ((decodedMap['gdeNo'].toString().isNotEmpty)) {
+        log("message: ${decodedMap['audio']}");
+        audioUrl = decodedMap['audio'];
 
-      childName = decodedMap['name'];
-      childAge = decodedMap['age'];
-      childGender = decodedMap['gender'];
-      childLocation = "${decodedMap['District']}, ${decodedMap['State']}";
-      childPhone = decodedMap['mobile'];
-      gdeDate = decodedMap['gdeDate'];
-      gdeNo = decodedMap['gdeNo'];
-      childImage = decodedMap['ImageURl'];
-      createChildScan();
-      return responseString;
-    }
+        childName = decodedMap['name'];
+        childAge = decodedMap['age'];
+        childGender = decodedMap['gender'];
+        childLocation = "${decodedMap['District']}, ${decodedMap['State']}";
+        childPhone = decodedMap['mobile'];
+        gdeDate = decodedMap['gdeDate'];
+        gdeNo = decodedMap['gdeNo'];
+        childImage = decodedMap['ImageURl'];
+        createChildScan();
+        return responseString;
+      }
+    } catch (e) {}
+
     return null;
   }
 
