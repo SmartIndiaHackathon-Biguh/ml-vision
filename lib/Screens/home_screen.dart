@@ -116,6 +116,8 @@ class _ListAppState extends State<ListApp> {
   final childrenCollection = FirebaseFirestore.instance.collection('victims');
   int numberChildren = 0;
 
+  List<Widget> myList = [Text('Loading')];
+
   @override
   void initState() {
     getListView();
@@ -147,16 +149,15 @@ class _ListAppState extends State<ListApp> {
                 ),
               ),
             ),
-            FutureBuilder(builder: builder)
             Expanded(
                 child: ListView(
-              children: getListView(),
+              children: myList,
             ))
           ]),
     );
   }
 
-  Future <List<Widget>> getListView() async {
+  Future<void> getListView() async {
     final _collection = await childrenCollection.get();
     final allData = _collection.docs.map((e) => e.data()).toList();
     setState(() {
@@ -165,11 +166,15 @@ class _ListAppState extends State<ListApp> {
 
     allData[0];
 
-    return allData.map((e) => childInfoView(
-        childName: e['name'],
-        childGender: e['gender'],
-        imgUrl: e['ImageURl'],
-        childAge: e['age'])).toList();
+    setState(() {
+      myList = allData
+          .map((e) => childInfoView(
+              childName: e['name'],
+              childGender: e['gender'],
+              imgUrl: e['ImageURl'],
+              childAge: e['age']))
+          .toList();
+    });
   }
 
   Widget childInfoView(
@@ -186,7 +191,7 @@ class _ListAppState extends State<ListApp> {
             fit: BoxFit.contain,
           ),
         ),
-        SizedBox.expand(
+        SizedBox(
           child: Column(children: [
             Text(childName),
             Text(childGender),
