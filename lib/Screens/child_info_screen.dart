@@ -124,7 +124,15 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
             SizedBox(
               height: 20,
             ),
-            Text("Play Video from Guardian:"),
+            Text(
+              "Play video from parent",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15),
+            ),
+            SizedBox(
+              height: 10,
+            ),
             FutureBuilder(
               future: _initializeVideoPlayerFuture,
               builder: (context, snapshot) {
@@ -144,6 +152,9 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                   );
                 }
               },
+            ),
+            SizedBox(
+              height: 15,
             ),
             FloatingActionButton(
               onPressed: () {
