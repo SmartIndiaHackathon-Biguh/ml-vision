@@ -10,6 +10,8 @@ class ScanModel {
   String? gdeNo;
   String? gdeDate;
   int? childPhone;
+  String? childImage;
+
 
   //userData
   GeoPoint? userPosition;
@@ -31,7 +33,7 @@ class ScanModel {
       this.userPhone,
       this.userEmail,
       this.userPosition,
-      this.scanTime});
+      this.scanTime, this.childImage});
 
   // get data from server
   factory ScanModel.fromMap(map) {
@@ -48,6 +50,7 @@ class ScanModel {
       userName: map['userName'],
       userPhone: map['userPhone'],
       userEmail: map['userEmail'],
+      childImage: map['childImage']
     );
   }
 
@@ -66,6 +69,7 @@ class ScanModel {
       'userName': userName,
       'userPhone': userPhone,
       'userEmail': userEmail,
+      'childImage': childImage
     };
   }
 }

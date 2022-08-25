@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
   String? gdeNo;
   String? gdeDate;
   int? childPhone;
+  String? audioUrl;
 
   // User info
   Position? userPosition;
@@ -78,52 +80,51 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     return AbsorbPointer(
         absorbing: false,
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            title: Text("Recognise Child"),
-            centerTitle: true,
-          ),
-          body: Center(
-              child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                DisplayImage(),
-                SizedBox(
-                  height: 25,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    buildButton(
-                        onClick: () {
-                          pickImage(ImageSource.gallery);
-                        },
-                        title: "Open Gallery"),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.02,
-                    ),
-                    buildButton(
-                        onClick: () {
-                          pickImage(ImageSource.camera);
-                        },
-                        title: "Open Camera"),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                analyseButton(),
-                SizedBox(
-                  height: 50,
-                ),
-              ],
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              title: Text("Recognise Child"),
+              centerTitle: true,
             ),
-          )),
-        ));
+            body: Center(
+                child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  DisplayImage(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      buildButton(
+                          onClick: () {
+                            pickImage(ImageSource.gallery);
+                          },
+                          title: "Open Gallery"),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.02,
+                      ),
+                      buildButton(
+                          onClick: () {
+                            pickImage(ImageSource.camera);
+                          },
+                          title: "Open Camera"),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  analyseButton(),
+                  SizedBox(
+                    height: 50,
+                  ),
+                ],
+              ),
+            ))));
   }
 
   Widget buildButton({
@@ -259,6 +260,8 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
           if (childAge != null) {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => ChildInfoScreen(
+                    audioUrl: audioUrl!,
+                    childImage: childImage!,
                     childName: childName!,
                     childAge: childAge!,
                     childGender: childGender!,
@@ -291,6 +294,9 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
     var responseString = await response.stream.bytesToString();
     final decodedMap = json.decode(responseString);
     if ((decodedMap['gdeNo'].toString().isNotEmpty)) {
+      log("message: ${decodedMap['audio']}");
+      audioUrl = decodedMap['audio'];
+
       childName = decodedMap['name'];
       childAge = decodedMap['age'];
       childGender = decodedMap['gender'];
@@ -298,6 +304,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
       childPhone = decodedMap['mobile'];
       gdeDate = decodedMap['gdeDate'];
       gdeNo = decodedMap['gdeNo'];
+      childImage = decodedMap['ImageURl'];
       createChildScan();
       return responseString;
     }

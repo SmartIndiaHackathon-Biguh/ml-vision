@@ -4,6 +4,9 @@ import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/google_maps.dart';
 import 'package:sih_login/Screens/home_screen.dart';
 import 'package:sih_login/Screens/ngo_screen.dart';
+import 'package:sih_login/Screens/test_screen1%20copy%203.dart';
+import 'package:sih_login/Screens/test_screen1%20copy.dart';
+import 'package:sih_login/Screens/test_screen1.dart';
 import 'package:sih_login/Screens/translate_text.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -22,9 +25,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
     final screens = [
       ListApp(),
       FaceDetectScreen(),
-      TranslatePage(),
-      PoliceScreen(),
-      ngoScreen(),
+      // TranslatePage(),
+      // PoliceScreen(),
+      // ngoScreen(),
+      HomeScreen2(),
+      HomeScreen3(),
+      HomeScreen4()
+      
     ];
     final items = <Widget>[
       const Icon(Icons.home, size: 30),
