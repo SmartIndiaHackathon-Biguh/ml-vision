@@ -269,7 +269,6 @@ class RregistrationScreenState extends State<RegistrationScreen> {
     userModel.uid = user.uid;
     userModel.firstName = firstNameController.text;
     userModel.lastName = lastNameController.text;
-    userModel.admin = 0;
 
     await firebaseFirestore
         .collection('users')

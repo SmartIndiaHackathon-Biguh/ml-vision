@@ -1,14 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:sih_login/Services/list_services.dart';
 
-import '../Models/user_model.dart';
-
 class ListApp extends StatefulWidget {
   const ListApp({Key? key}) : super(key: key);
+  
 
   @override
   State<ListApp> createState() => _ListAppState();
@@ -18,29 +16,11 @@ class _ListAppState extends State<ListApp> {
   final childrenCollection = FirebaseFirestore.instance.collection('victims');
   int numberChildren = 0;
 
-  User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
-
   List<Widget> myList = [Text('Loading')];
 
   @override
   void initState() {
-    super.initState();
-
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
-      setState(() {});
-    });
-    if (loggedInUser.admin == 1) {
-      getListViewAdmin();
-    } else {
-      getListView();
-    }
-      
+    getListView();
   }
 
   //func get an entire list of all people
@@ -90,6 +70,8 @@ class _ListAppState extends State<ListApp> {
       numberChildren = allData.length;
     });
 
+    allData[0];
+
     setState(() {
       myList = allData
           .map((e) => childInfoView(
@@ -102,24 +84,24 @@ class _ListAppState extends State<ListApp> {
   }
 
   Future<void> getListViewAdmin() async {
-    final scanCollection =
-        FirebaseFirestore.instance.collection('scan-details');
+    final scanCollection = FirebaseFirestore.instance.collection('scan-details');
     final collection = await scanCollection.get();
     final allData = collection.docs.map((e) => e.data()).toList();
     setState(() {
       numberChildren = allData.length;
     });
 
-      setState(() {
+    allData[0];
+
+    setState(() {
       myList = allData
           .map((e) => childInfoView(
               childName: e['childName'],
               childGender: e['userName'],
-              imgUrl: e['childImage'],
+              imgUrl: e['ImageURl'],
               childAge: e['userPhone']))
           .toList();
     });
-    
   }
 
   Widget childInfoView(
