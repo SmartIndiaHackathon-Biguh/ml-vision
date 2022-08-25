@@ -67,6 +67,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
     final otpTextFieled1 = OtpTextField(
       numberOfFields: 6,
       borderColor: Color(0xFF512DA8),
+      fieldWidth: MediaQuery.of(context).size.width * 0.1,
       //set to true to show as box or false to show as dash
       showFieldAsBox: true,
       //runs when a code is typed in

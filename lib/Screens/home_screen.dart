@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:sih_login/Services/list_services.dart';
+
+import '../Models/user_model.dart';
 
 class ListApp extends StatefulWidget {
   const ListApp({Key? key}) : super(key: key);
@@ -15,11 +18,29 @@ class _ListAppState extends State<ListApp> {
   final childrenCollection = FirebaseFirestore.instance.collection('victims');
   int numberChildren = 0;
 
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+
   List<Widget> myList = [Text('Loading')];
 
   @override
   void initState() {
-    getListView();
+    super.initState();
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    if (loggedInUser.admin == 1) {
+      getListViewAdmin();
+    } else {
+      getListView();
+    }
+      
   }
 
   //func get an entire list of all people
@@ -56,11 +77,6 @@ class _ListAppState extends State<ListApp> {
             Expanded(
               child: ListView(
                 children: myList,
-                // child: ListView.builder(
-                //   itemCount: numberChildren,
-                //   physics: BouncingScrollPhysics(),
-                //   itemBuilder: (BuildContext context, int index) {
-                //     return
               ),
             ),
           ]),
@@ -74,8 +90,6 @@ class _ListAppState extends State<ListApp> {
       numberChildren = allData.length;
     });
 
-    allData[0];
-
     setState(() {
       myList = allData
           .map((e) => childInfoView(
@@ -87,29 +101,32 @@ class _ListAppState extends State<ListApp> {
     });
   }
 
+  Future<void> getListViewAdmin() async {
+    final scanCollection =
+        FirebaseFirestore.instance.collection('scan-details');
+    final collection = await scanCollection.get();
+    final allData = collection.docs.map((e) => e.data()).toList();
+    setState(() {
+      numberChildren = allData.length;
+    });
+
+      setState(() {
+      myList = allData
+          .map((e) => childInfoView(
+              childName: e['childName'],
+              childGender: e['userName'],
+              imgUrl: e['childImage'],
+              childAge: e['userPhone']))
+          .toList();
+    });
+    
+  }
+
   Widget childInfoView(
       {required String childName,
       required String childGender,
       required String imgUrl,
       required int childAge}) {
-    // return Row(
-    //   children: [
-    //     SizedBox(
-    //       width: MediaQuery.of(context).size.width * 0.3,
-    //       child: Image.network(
-    //         imgUrl,
-    //         fit: BoxFit.contain,
-    //       ),
-    //     ),
-    //     SizedBox(
-    //       child: Column(children: [
-    //         Text(childName),
-    //         Text(childGender),
-    //         Text(childAge.toString())
-    //       ]),
-    //     )
-    //   ],
-    // );
     return ListTile(
       visualDensity: VisualDensity(vertical: 2),
       leading: SizedBox(

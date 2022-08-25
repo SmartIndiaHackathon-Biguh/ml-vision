@@ -246,8 +246,7 @@ class RregistrationScreenState extends State<RegistrationScreen> {
             .then((value) => {
                   postDetailsToFirestore(),
                   Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => BottomNavBar()),
+                      MaterialPageRoute(builder: (context) => BottomNavBar()),
                       (Route route) => false)
                 });
       } on FirebaseAuthException catch (e) {
@@ -270,6 +269,7 @@ class RregistrationScreenState extends State<RegistrationScreen> {
     userModel.uid = user.uid;
     userModel.firstName = firstNameController.text;
     userModel.lastName = lastNameController.text;
+    userModel.admin = 0;
 
     await firebaseFirestore
         .collection('users')
