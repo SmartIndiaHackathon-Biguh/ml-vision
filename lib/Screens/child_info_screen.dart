@@ -1,7 +1,9 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:sih_login/Models/user_model.dart';
 import 'package:sih_login/Screens/login_screen.dart';
 // ignore_for_file: prefer_const_constructors
@@ -14,7 +16,8 @@ class ChildInfoScreen extends StatefulWidget {
       required this.childGender,
       required this.childLocation,
       required this.childContactNumber,
-      required this.childImage})
+      required this.childImage,
+      required this.audioUrl})
       : super(key: key);
 
   String childName;
@@ -23,12 +26,16 @@ class ChildInfoScreen extends StatefulWidget {
   int childContactNumber;
   String childLocation;
   String childImage;
+  String audioUrl;
+  final player = AudioPlayer();
 
   @override
   State<ChildInfoScreen> createState() => _ChildInfoScreenState();
 }
 
 class _ChildInfoScreenState extends State<ChildInfoScreen> {
+  String playing = 'Paused';
+
   @override
   void initState() {
     super.initState();
@@ -91,6 +98,24 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
             ),
             SizedBox(
               height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (playing == 'Paused') {
+                  await widget.player.setSourceUrl(widget.audioUrl);
+                  await widget.player.resume();
+                  setState(() async {
+                    playing = 'Playing';
+                  });
+                } else {
+                  await widget.player.pause();
+
+                  setState(() async {
+                    playing = 'Paused';
+                  });
+                }
+              },
+              child: Text('Audio ${playing}'),
             ),
           ],
         ),
