@@ -131,12 +131,13 @@ class _PoliceScreenState extends State<PoliceScreen> {
         backgroundColor: Colors.blueAccent,
       ),
       body: Container(
-        height: 0.4*screenHeight,
+        height: screenHeight - 150.0,
         width: screenWidth,
         child: GoogleMap(
           mapType: MapType.normal,
           initialCameraPosition:
               const CameraPosition(target: LatLng(27, 28), zoom: 16),
+          myLocationEnabled: true,
           markers: Set.of(_marker),
           onMapCreated: (GoogleMapController controller) async {
             googleMapController = controller;
