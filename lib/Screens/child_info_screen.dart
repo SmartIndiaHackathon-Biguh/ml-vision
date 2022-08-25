@@ -26,14 +26,15 @@ class ChildInfoScreen extends StatefulWidget {
   String childLocation;
   String childImage;
   String audioUrl;
-  final player = AudioPlayer();
-
   @override
   State<ChildInfoScreen> createState() => _ChildInfoScreenState();
 }
 
 class _ChildInfoScreenState extends State<ChildInfoScreen> {
-  String playing = 'Paused';
+  final player = AudioPlayer();
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
 
   @override
   void initState() {
@@ -98,24 +99,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
             SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-              onPressed: () async {
-                if (playing == 'Paused') {
-                  await widget.player.setSourceUrl(widget.audioUrl);
-                  await widget.player.resume();
-                  setState(() async {
-                    playing = 'Playing';
-                  });
-                } else {
-                  await widget.player.pause();
-
-                  setState(() async {
-                    playing = 'Paused';
-                  });
-                }
-              },
-              child: Text('Audio ${playing}'),
-            ),
+            Text("Play Video from Guardian:")
           ],
         ),
       )),
