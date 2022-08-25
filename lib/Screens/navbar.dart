@@ -23,7 +23,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     final screens = [
-      HomeScreen(),
+      ListApp(),
       FaceDetectScreen(),
       // TranslatePage(),
       // PoliceScreen(),

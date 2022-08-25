@@ -52,7 +52,6 @@ class PlaceServices {
     var response = await http.get(Uri.parse(url));
 
     var results = convert.jsonDecode(response.body);
-    print(results);
     return results;
   }
 }
