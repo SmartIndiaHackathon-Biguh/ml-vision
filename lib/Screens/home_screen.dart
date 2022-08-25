@@ -37,29 +37,31 @@ class _ListAppState extends State<ListApp> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 30,
+              height: 10,
             ),
             SizedBox(
               height: 40,
               width: screenWidth,
-              child: Text(
-                'Total missing children : $numberChildren',
-                style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
+              child: Center(
+                child: Text(
+                  'Total missing children : $numberChildren',
+                  style: TextStyle(
+                    color: Colors.blueAccent,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
             Expanded(
-              child: ListView(
-                children: myList,
-                // child: ListView.builder(
-                //   itemCount: numberChildren,
-                //   physics: BouncingScrollPhysics(),
-                //   itemBuilder: (BuildContext context, int index) {
-                //     return
-              ),
+              // child: ListView(
+              //   children: myList,
+              child: ListView.builder(
+                  itemCount: numberChildren,
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    return myList[index];
+                  }),
             ),
           ]),
     );
@@ -108,22 +110,46 @@ class _ListAppState extends State<ListApp> {
     //     )
     //   ],
     // );
-    return ListTile(
-      visualDensity: VisualDensity(vertical: 2),
-      leading: SizedBox(
-        child: Image.network(
-          imgUrl,
-          fit: BoxFit.contain,
-        ),
-        height: 200,
-      ),
-      title: Text(
-        childName,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(
-        "Gender: $childGender  |   Age: $childAge",
-        style: TextStyle(fontWeight: FontWeight.bold),
+    // return ListTile(
+    //   visualDensity: VisualDensity(vertical: 2),
+    //   leading: SizedBox(
+    //     child: Image.network(
+    //       imgUrl,
+    //       fit: BoxFit.contain,
+    //     ),
+    //     height: 200,
+    //   ),
+    //   title: Text(
+    //     childName,
+    //     style: TextStyle(fontWeight: FontWeight.bold),
+    //   ),
+    //   subtitle: Text(
+    //     "Gender: $childGender  |   Age: $childAge",
+    //     style: TextStyle(fontWeight: FontWeight.bold),
+    //   ),
+    // );
+    return Container(
+      height: 150,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
+      color: Colors.white,
+      boxShadow: [BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 10)]),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(childName, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),),
+                Text(childGender, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                Text(childAge.toString(), style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),)
+              ],
+              
+            ),
+            Image.network(imgUrl, fit: BoxFit.contain,)
+          ]),
       ),
     );
   }
