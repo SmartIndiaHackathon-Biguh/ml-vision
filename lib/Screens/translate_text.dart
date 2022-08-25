@@ -184,3 +184,5 @@ class _TranslatePageState extends State<TranslatePage> {
     }
   }
 }
+
+// Clipboard.setData(ClipboardData(text: "your text"))

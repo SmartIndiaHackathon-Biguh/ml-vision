@@ -25,13 +25,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
     final screens = [
       ListApp(),
       FaceDetectScreen(),
-      // TranslatePage(),
-      // PoliceScreen(),
-      // ngoScreen(),
-      HomeScreen2(),
-      HomeScreen3(),
-      HomeScreen4()
-      
+      TranslatePage(),
+      PoliceScreen(),
+      ngoScreen(),
+      // HomeScreen2(),
+      // HomeScreen3(),
+      // HomeScreen4()
     ];
     final items = <Widget>[
       const Icon(Icons.home, size: 30),
