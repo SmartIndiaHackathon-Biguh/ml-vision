@@ -186,6 +186,7 @@ class _ListAppState extends State<ListApp> {
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.3,
+          height: MediaQuery.of(context).size.width * 0.05,
           child: Image.network(
             imgUrl,
             fit: BoxFit.contain,
