@@ -246,8 +246,7 @@ class RregistrationScreenState extends State<RegistrationScreen> {
             .then((value) => {
                   postDetailsToFirestore(),
                   Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => BottomNavBar()),
+                      MaterialPageRoute(builder: (context) => BottomNavBar()),
                       (Route route) => false)
                 });
       } on FirebaseAuthException catch (e) {

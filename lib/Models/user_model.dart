@@ -6,8 +6,7 @@ class UserModel {
   String? firstName;
   String? lastName;
 
-  UserModel(
-      {this.uid, this.email, this.firstName, this.lastName});
+  UserModel({this.uid, this.email, this.firstName, this.lastName});
 
   // get data from server
   factory UserModel.fromMap(map) {
