@@ -8,6 +8,7 @@ import 'package:sih_login/Screens/google_maps.dart';
 import 'package:sih_login/Screens/home_police.dart';
 import 'package:sih_login/Screens/home_screen.dart';
 import 'package:sih_login/Screens/ngo_screen.dart';
+import 'package:sih_login/Screens/ngo_screen2.dart';
 import 'package:sih_login/Screens/translate_text.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -44,14 +45,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
       FaceDetectScreen(),
       TranslatePage(),
       PoliceScreen(),
-      ngoScreen(),
+      ngoScreen2(),
     ];
     final items = <Widget>[
       const Icon(Icons.home, size: 30),
       const Icon(Icons.camera_alt, size: 30),
       const Icon(Icons.translate, size: 30),
       const Icon(Icons.map, size: 30),
-      const Icon(Icons.settings, size: 30),
+      const Icon(Icons.headset_mic, size: 30),
     ];
     return Scaffold(
       body: IndexedStack(
