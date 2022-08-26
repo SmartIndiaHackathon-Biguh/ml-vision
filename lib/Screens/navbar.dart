@@ -7,7 +7,6 @@ import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/google_maps.dart';
 import 'package:sih_login/Screens/home_police.dart';
 import 'package:sih_login/Screens/home_screen.dart';
-import 'package:sih_login/Screens/ngo_screen.dart';
 import 'package:sih_login/Screens/ngo_screen2.dart';
 import 'package:sih_login/Screens/translate_text.dart';
 
