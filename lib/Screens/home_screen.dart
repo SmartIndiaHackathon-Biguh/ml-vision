@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sih_login/Screens/login_screen.dart';
 import 'package:sih_login/Services/list_services.dart';
 
 class ListApp extends StatefulWidget {
@@ -31,6 +34,16 @@ class _ListAppState extends State<ListApp> {
       appBar: AppBar(
         title: Text('Toddlert'),
         backgroundColor: Colors.blueAccent,
+        actions: [
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  logOut(context);
+                },
+                child: Icon(Icons.more_vert),
+              )),
+        ],
       ),
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,42 +105,7 @@ class _ListAppState extends State<ListApp> {
       required String childGender,
       required String imgUrl,
       required int childAge}) {
-    // return Row(
-    //   children: [
-    //     SizedBox(
-    //       width: MediaQuery.of(context).size.width * 0.3,
-    //       child: Image.network(
-    //         imgUrl,
-    //         fit: BoxFit.contain,
-    //       ),
-    //     ),
-    //     SizedBox(
-    //       child: Column(children: [
-    //         Text(childName),
-    //         Text(childGender),
-    //         Text(childAge.toString())
-    //       ]),
-    //     )
-    //   ],
-    // );
-    // return ListTile(
-    //   visualDensity: VisualDensity(vertical: 2),
-    //   leading: SizedBox(
-    //     child: Image.network(
-    //       imgUrl,
-    //       fit: BoxFit.contain,
-    //     ),
-    //     height: 200,
-    //   ),
-    //   title: Text(
-    //     childName,
-    //     style: TextStyle(fontWeight: FontWeight.bold),
-    //   ),
-    //   subtitle: Text(
-    //     "Gender: $childGender  |   Age: $childAge",
-    //     style: TextStyle(fontWeight: FontWeight.bold),
-    //   ),
-    // );
+
     return Container(
       height: 150,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -165,5 +143,15 @@ class _ListAppState extends State<ListApp> {
         ]),
       ),
     );
+  }
+
+  Future<void> logOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => LoginScreen()));
+    } on FirebaseAuthException catch (e) {
+      Fluttertoast.showToast(msg: e.message.toString());
+    }
   }
 }

@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sih_login/Services/list_services.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'login_screen.dart';
 
 class ListAppPolice extends StatefulWidget {
   const ListAppPolice({Key? key}) : super(key: key);
@@ -32,6 +36,16 @@ class _ListAppPoliceState extends State<ListAppPolice> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Toddlert'),
+                actions: [
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  logOut(context);
+                },
+                child: Icon(Icons.more_vert),
+              )),
+        ],
         backgroundColor: Colors.blueAccent,
       ),
       body: Column(
@@ -147,6 +161,16 @@ class _ListAppPoliceState extends State<ListAppPolice> {
     final Uri url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$long');
     if(!await launchUrl(url)){
       throw 'Could not launch $url';
+    }
+  }
+
+   Future<void> logOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => LoginScreen()));
+    } on FirebaseAuthException catch (e) {
+      Fluttertoast.showToast(msg: e.message.toString());
     }
   }
 }
