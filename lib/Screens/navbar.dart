@@ -8,9 +8,6 @@ import 'package:sih_login/Screens/google_maps.dart';
 import 'package:sih_login/Screens/home_police.dart';
 import 'package:sih_login/Screens/home_screen.dart';
 import 'package:sih_login/Screens/ngo_screen.dart';
-import 'package:sih_login/Screens/test_screen1%20copy%203.dart';
-import 'package:sih_login/Screens/test_screen1%20copy.dart';
-import 'package:sih_login/Screens/test_screen1.dart';
 import 'package:sih_login/Screens/translate_text.dart';
 
 class BottomNavBar extends StatefulWidget {

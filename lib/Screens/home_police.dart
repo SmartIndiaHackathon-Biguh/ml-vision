@@ -30,7 +30,7 @@ class _ListAppPoliceState extends State<ListAppPolice> {
   void initState() {
     getListViewPolice();
     timer =
-        Timer.periodic(Duration(seconds: 15), (Timer t) => getListViewPolice());
+        Timer.periodic(Duration(seconds: 30), (Timer t) => getListViewPolice());
   }
 
   @override

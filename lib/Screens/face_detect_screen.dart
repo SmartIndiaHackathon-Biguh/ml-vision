@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:native_exif/native_exif.dart';
 import 'package:sih_login/Models/child_user_model.dart';
 import 'package:sih_login/Models/user_model.dart';
 import 'dart:ui' as ui;
@@ -20,6 +21,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:sih_login/Screens/child_info_screen.dart';
 import '../Modules/FaceDetection/DynamicDialog.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
+import 'package:exif/exif.dart';
 // ignore_for_file: non_constant_identifier_names
 // ignore_for_file: prefer_const_constructors
 
@@ -78,10 +80,10 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
           accountSid: 'ACd6d58528cbd89ded2645a8d231ab14ac',
           authToken: 'f1c1d1567477cb092eefeabeb9b32c28',
           twilioNumber: '+15155176934');
-      super.initState();
       setState(() {});
     });
   }
+
 
   void sendSms() async {
     twilioFlutter!.sendSMS(
@@ -230,7 +232,24 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
           await ImagePicker().pickImage(source: source, imageQuality: 20);
       if (image == null) return;
 
+      final exif = await Exif.fromPath(image.path);
+      final attributes = await exif.getAttributes();
+      final shootingDate = await exif.getOriginalDate();
+      final coordinates = await exif.getLatLong();
+
+      log("The selected image has ${attributes?.length ?? 0} attributes.");
+      log("It was taken at ${shootingDate.toString()}");
+      log(attributes?["UserComment"]?.toString() ?? '');
+      log("Attributes: $attributes");
+      log("Coordinates: $coordinates");
       final temporaryImage = File(image.path);
+
+      // final imageBytes = temporaryImage.readAsBytesSync();
+      // final imageMeta = await readExifFromBytes(imageBytes);
+      // for (final entry in imageMeta.entries) {
+      //   log("${entry.key}: ${entry.value}");
+      // }
+
       setState(() {
         this.image = temporaryImage;
         boundedImage = false;

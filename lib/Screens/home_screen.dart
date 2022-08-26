@@ -57,10 +57,10 @@ class _ListAppState extends State<ListApp> {
               width: screenWidth,
               child: Center(
                 child: Text(
-                  'Total missing children : $numberChildren',
+                  'Total missing children: $numberChildren',
                   style: TextStyle(
                     color: Colors.blueAccent,
-                    fontSize: 30,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -115,32 +115,38 @@ class _ListAppState extends State<ListApp> {
           boxShadow: [
             BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 10)
           ]),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                childName,
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.5,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  childName,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  childGender,
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  childAge.toString(),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.2,
+              child: Image.network(
+                imgUrl,
+                fit: BoxFit.contain,
               ),
-              Text(
-                childGender,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                childAge.toString(),
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-          Image.network(
-            imgUrl,
-            fit: BoxFit.contain,
-          )
-        ]),
+            )
+          ]),
+        ),
       ),
     );
   }
