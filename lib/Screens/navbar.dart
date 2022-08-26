@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:sih_login/Screens/face_detect_screen.dart';
 import 'package:sih_login/Screens/google_maps.dart';
+import 'package:sih_login/Screens/home_police.dart';
 import 'package:sih_login/Screens/home_screen.dart';
 import 'package:sih_login/Screens/ngo_screen.dart';
 import 'package:sih_login/Screens/test_screen1%20copy%203.dart';
@@ -23,7 +24,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     final screens = [
-      ListApp(),
+      ListAppPolice(),
+      //ListApp(),
       FaceDetectScreen(),
       TranslatePage(),
       PoliceScreen(),

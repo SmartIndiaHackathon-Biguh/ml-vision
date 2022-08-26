@@ -2,24 +2,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sih_login/Services/list_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ListApp extends StatefulWidget {
-  const ListApp({Key? key}) : super(key: key);
+class ListAppPolice extends StatefulWidget {
+  const ListAppPolice({Key? key}) : super(key: key);
 
   @override
-  State<ListApp> createState() => _ListAppState();
+  State<ListAppPolice> createState() => _ListAppPoliceState();
 }
 
-class _ListAppState extends State<ListApp> {
-  final childrenCollection = FirebaseFirestore.instance.collection('victims');
+class _ListAppPoliceState extends State<ListAppPolice> {
+  final childrenCollection = FirebaseFirestore.instance.collection('scan-details');
   int numberChildren = 0;
 
   List<Widget> myList = [Text('Loading')];
 
   @override
   void initState() {
-    getListView();
+    getListViewPolice();
   }
 
   //func get an entire list of all people
@@ -67,67 +69,34 @@ class _ListAppState extends State<ListApp> {
     );
   }
 
-  Future<void> getListView() async {
+  Future<void> getListViewPolice() async {
     final _collection = await childrenCollection.get();
     final allData = _collection.docs.map((e) => e.data()).toList();
     setState(() {
       numberChildren = allData.length;
     });
 
-    allData[0];
 
     setState(() {
       myList = allData
           .map((e) => childInfoView(
-              childName: e['name'],
-              childGender: e['gender'],
-              imgUrl: e['ImageURl'],
-              childAge: e['age']))
+              childName: e['childName'],
+              childLocation: e['childLocation'],
+              userPhone: e['userPhone'],
+              userName: e['userName'],
+              scanTime: e['scanTime'],
+              userPosition: e['userPosition'] ))
           .toList();
     });
   }
 
   Widget childInfoView(
       {required String childName,
-      required String childGender,
-      required String imgUrl,
-      required int childAge}) {
-    // return Row(
-    //   children: [
-    //     SizedBox(
-    //       width: MediaQuery.of(context).size.width * 0.3,
-    //       child: Image.network(
-    //         imgUrl,
-    //         fit: BoxFit.contain,
-    //       ),
-    //     ),
-    //     SizedBox(
-    //       child: Column(children: [
-    //         Text(childName),
-    //         Text(childGender),
-    //         Text(childAge.toString())
-    //       ]),
-    //     )
-    //   ],
-    // );
-    // return ListTile(
-    //   visualDensity: VisualDensity(vertical: 2),
-    //   leading: SizedBox(
-    //     child: Image.network(
-    //       imgUrl,
-    //       fit: BoxFit.contain,
-    //     ),
-    //     height: 200,
-    //   ),
-    //   title: Text(
-    //     childName,
-    //     style: TextStyle(fontWeight: FontWeight.bold),
-    //   ),
-    //   subtitle: Text(
-    //     "Gender: $childGender  |   Age: $childAge",
-    //     style: TextStyle(fontWeight: FontWeight.bold),
-    //   ),
-    // );
+      required String childLocation,
+      required int userPhone,
+      required String userName,
+      required Timestamp scanTime,
+      required GeoPoint userPosition}) {
     return Container(
       height: 150,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -149,21 +118,35 @@ class _ListAppState extends State<ListApp> {
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               Text(
-                childGender,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                childLocation,
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
               ),
               Text(
-                childAge.toString(),
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                userName.toString(),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              Text('$userPhone',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
               )
             ],
           ),
-          Image.network(
-            imgUrl,
-            fit: BoxFit.contain,
-          )
-        ]),
+          IconButton(
+            onPressed: () {
+            _launcUrl(userPosition.latitude, userPosition.longitude);
+            }, 
+            icon: Icon(Icons.map),
+            iconSize: 50,
+          ),
+            ],
+        ),
       ),
     );
+  }
+
+  Future<void> _launcUrl(double lat, double long) async{
+    final Uri url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$long');
+    if(!await launchUrl(url)){
+      throw 'Could not launch $url';
+    }
   }
 }
