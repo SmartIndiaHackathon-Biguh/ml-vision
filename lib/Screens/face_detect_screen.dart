@@ -67,6 +67,23 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
 
   TwilioFlutter? twilioFlutter;
 
+  void resetImageData() {
+    childName = null;
+    childAge = null;
+    childGender = null;
+    childLocation = null;
+    gdeNo = null;
+    gdeDate = null;
+    childPhone = null;
+    audioUrl = null;
+
+    image = null;
+    boundedImage = false;
+    _faces = null;
+    isLoading = false;
+    _image = null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -83,7 +100,6 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
       setState(() {});
     });
   }
-
 
   void sendSms() async {
     twilioFlutter!.sendSMS(
@@ -227,6 +243,7 @@ class _FaceDetectScreenState extends State<FaceDetectScreen> {
 
   Future pickImage(ImageSource source) async {
     try {
+      resetImageData();
       isLoading = true;
       final image =
           await ImagePicker().pickImage(source: source, imageQuality: 20);
