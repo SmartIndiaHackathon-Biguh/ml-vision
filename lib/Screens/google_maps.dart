@@ -58,6 +58,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
           initialCameraPosition:
               const CameraPosition(target: LatLng(27, 28), zoom: 16),
           myLocationEnabled: true,
+          myLocationButtonEnabled: true,
           markers: Set.of(_marker),
           onMapCreated: (GoogleMapController controller) async {
             googleMapController = controller;
