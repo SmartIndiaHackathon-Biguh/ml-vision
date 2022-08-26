@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,14 +20,23 @@ class ListAppPolice extends StatefulWidget {
 }
 
 class _ListAppPoliceState extends State<ListAppPolice> {
-  final childrenCollection = FirebaseFirestore.instance.collection('scan-details');
+  final childrenCollection =
+      FirebaseFirestore.instance.collection('scan-details');
   int numberChildren = 0;
-
+  Timer? timer;
   List<Widget> myList = [Text('Loading')];
 
   @override
   void initState() {
     getListViewPolice();
+    timer =
+        Timer.periodic(Duration(seconds: 15), (Timer t) => getListViewPolice());
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   //func get an entire list of all people
@@ -36,7 +47,7 @@ class _ListAppPoliceState extends State<ListAppPolice> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Toddlert'),
-                actions: [
+        actions: [
           Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: GestureDetector(
@@ -60,7 +71,7 @@ class _ListAppPoliceState extends State<ListAppPolice> {
               width: screenWidth,
               child: Center(
                 child: Text(
-                  'Total missing children : $numberChildren',
+                  'Total children pings: $numberChildren',
                   style: TextStyle(
                     color: Colors.blueAccent,
                     fontSize: 30,
@@ -86,10 +97,12 @@ class _ListAppPoliceState extends State<ListAppPolice> {
   Future<void> getListViewPolice() async {
     final _collection = await childrenCollection.get();
     final allData = _collection.docs.map((e) => e.data()).toList();
+    allData.sort((a, b) {
+      return b['scanTime'].compareTo(a['scanTime']);
+    });
     setState(() {
       numberChildren = allData.length;
     });
-
 
     setState(() {
       myList = allData
@@ -99,7 +112,7 @@ class _ListAppPoliceState extends State<ListAppPolice> {
               userPhone: e['userPhone'],
               userName: e['userName'],
               scanTime: e['scanTime'],
-              userPosition: e['userPosition'] ))
+              userPosition: e['userPosition']))
           .toList();
     });
   }
@@ -122,49 +135,58 @@ class _ListAppPoliceState extends State<ListAppPolice> {
           ]),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                childName,
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                childLocation,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-              ),
-              Text(
-                userName.toString(),
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              Text('$userPhone',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-              )
-            ],
-          ),
-          IconButton(
-            onPressed: () {
-            _launcUrl(userPosition.latitude, userPosition.longitude);
-            }, 
-            icon: Icon(Icons.map),
-            iconSize: 50,
-          ),
-            ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  childName,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  childLocation,
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic),
+                ),
+                Text(
+                  userName.toString(),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '$userPhone',
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic),
+                )
+              ],
+            ),
+            IconButton(
+              onPressed: () {
+                _launcUrl(userPosition.latitude, userPosition.longitude);
+              },
+              icon: Icon(Icons.map),
+              iconSize: 50,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Future<void> _launcUrl(double lat, double long) async{
-    final Uri url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$long');
-    if(!await launchUrl(url)){
+  Future<void> _launcUrl(double lat, double long) async {
+    final Uri url =
+        Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$long');
+    if (!await launchUrl(url)) {
       throw 'Could not launch $url';
     }
   }
 
-   Future<void> logOut(BuildContext context) async {
+  Future<void> logOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
       Navigator.of(context).pushReplacement(
