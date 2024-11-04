@@ -1,16 +1,26 @@
-# sih_login
+# Toddlert
 
-A new Flutter project.
+## Overview
+**Toddlert** is a mobile application designed to assist in the identification and recovery of missing children using advanced facial recognition technology. Developed in collaboration with the Cyber Crime Unit, Special Cell, Delhi Police, MHA, this app aims to mobilize community efforts in locating missing children effectively and efficiently.
+
+## Features
+- **Facial Recognition**: Utilizes state-of-the-art facial recognition algorithms to identify missing children.
+- **User-Friendly Interface**: Intuitive design that allows users to easily navigate and report sightings of missing children.
+- **Real-Time Updates**: Users receive instant notifications and updates about missing children in their vicinity.
+- **High Accuracy & Low Response Time**: The app outperforms competitors in accuracy and speed, ensuring rapid identification and reporting.
+
+## Technologies Used
+- **Flutter**: For building a cross-platform mobile application.
+- **Dlib**: For implementing facial recognition algorithms.
+- **OpenCV**: For image processing tasks.
+- **Docker**: For containerizing the application and managing dependencies.
+- **Firebase**: For backend services, including real-time database and authentication.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Prerequisites
+- Flutter SDK
+- Dlib
+- OpenCV
+- Docker
+- Firebase account
